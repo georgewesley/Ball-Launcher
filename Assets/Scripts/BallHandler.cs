@@ -25,7 +25,6 @@ public class BallHandler : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(currentBallRigidBody == null) { return; }
