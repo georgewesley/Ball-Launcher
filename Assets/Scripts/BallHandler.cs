@@ -49,6 +49,13 @@ public class BallHandler : MonoBehaviour
             Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
             currentBallRigidBody.position = worldPosition;
         }
+        else
+        {
+            if (springCollider.IsTouching(ballCollider))
+            {
+                DetachBall();
+            }
+        }
     }
     private void LaunchBall() {
         isLaunching = true;
