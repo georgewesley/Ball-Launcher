@@ -31,8 +31,11 @@ public class BallHandler : MonoBehaviour
         if(currentBallRigidBody == null) { return; }
         if(!Touchscreen.current.primaryTouch.press.isPressed) {
             if(isDragging) {
-                currentBallRigidBody.gravityScale = gravityScale;
-                LaunchBall();
+                if(!isLaunching)
+                {
+                    currentBallRigidBody.gravityScale = gravityScale;
+                    LaunchBall();
+                }
                 if(springCollider.IsTouching(ballCollider)) {
                     DetachBall();
                 }
