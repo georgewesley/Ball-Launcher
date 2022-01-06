@@ -11,15 +11,16 @@ public class BallHandler : MonoBehaviour
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private Rigidbody2D pivot;
     [SerializeField] private float respawnTime;
-     CircleCollider2D ballCollider;
-     private Rigidbody2D currentBallRigidBody;
-     Vector2 touchPosition;
-     private Camera mainCamera;
-     private bool isDragging;
+    CircleCollider2D ballCollider;
+    private Rigidbody2D currentBallRigidBody;
+    Vector2 touchPosition;
+    private Camera mainCamera;
+    private bool isDragging;
+    private bool isLaunching;
      
 
-     private float gravityScale;
-    void Start()
+    private float gravityScale;
+    void Awake()
     {
         Respawn();
         mainCamera = Camera.main;
@@ -38,17 +39,18 @@ public class BallHandler : MonoBehaviour
             }
             return;
         }
-        isDragging = true;
-        currentBallRigidBody.isKinematic = true;
-        touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();
-        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
-        
-        currentBallRigidBody.position = worldPosition;
-
-        
+        if (!isLaunching)
+        {
+            isDragging = true;
+            touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
+            currentBallRigidBody.position = worldPosition;
+        }
     }
     private void LaunchBall() {
+        isLaunching = true;
         currentBallRigidBody.isKinematic = false;
+        currentBallSpringJoint.GetComponent<AudioSource>().Play();
     }
 
     void DetachBall() {
@@ -59,6 +61,7 @@ public class BallHandler : MonoBehaviour
     }
 
     void Respawn() {
+        isLaunching = false;
         currentBallSpringJoint.enabled = true;
         GameObject ballInstance = Instantiate(ballPrefab, pivot.position, Quaternion.identity);
         currentBallRigidBody = ballInstance.GetComponent<Rigidbody2D>();
@@ -66,6 +69,7 @@ public class BallHandler : MonoBehaviour
         ballCollider = ballInstance.GetComponent<CircleCollider2D>();
         gravityScale = currentBallRigidBody.gravityScale;
         currentBallRigidBody.gravityScale = 0;
+        currentBallRigidBody.isKinematic = true;
     }
 
 }
